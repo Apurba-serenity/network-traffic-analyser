@@ -1,2 +1,79 @@
+import os
+import time
+import psutil
+from prettytable import PrettyTable
+from prettytable import DOUBLE_BORDER
+
+# Units of memory sizes
+SIZE_UNITS = ['bytes', 'KB', 'MB', 'GB', 'TB']
+
+# Function that returns bytes in a readable format
+def get_size(bytes_value):
+    for unit in SIZE_UNITS:
+        if bytes_value < 1024:
+            return f"{bytes_value:.1f} {unit}"
+        bytes_value /= 1024
+    return f"{bytes_value:.1f} TB"  # Fallback for extremely large values
+
+# Prints the data on the terminal or console
+def print_data(upload_stat, download_stat, net_stats):
+    # Clear the console based on the operating system
+    os.system('cls' if os.name == 'nt' else 'clear')
+    
+    print("\n===== Apurba Network Analyzer =====\n")
+    
+    # Creating an instance of PrettyTable
+    table = PrettyTable()
+    table.set_style(DOUBLE_BORDER)
+    
+    # Column Names of the table
+    table.field_names = ["Total Received", "Receiving Speed", "Total Sent", "Sending Speed"]
+    
+    # Adding row to the table
+    table.add_row([
+        f"{get_size(net_stats.bytes_recv)}", 
+        f"{get_size(download_stat)}/s", 
+        f"{get_size(net_stats.bytes_sent)}", 
+        f"{get_size(upload_stat)}/s"
+    ])
+    
+    print(table)
+
+# Main function to analyze network traffic
+def apurba_network_analyzer():
+    try:
+        # Initial network I/O stats
+        initial_net_stats = psutil.net_io_counters()
+        
+        # Initial data sent and received
+        prev_data_sent = initial_net_stats.bytes_sent
+        prev_data_recv = initial_net_stats.bytes_recv
+
+        # Continuous monitoring loop
+        while True:
+            time.sleep(1)  # Delay for one second
+
+            # Get current network I/O stats
+            current_net_stats = psutil.net_io_counters()
+            
+            # Calculate sending and receiving speeds
+            upload_speed = current_net_stats.bytes_sent - prev_data_sent
+            download_speed = current_net_stats.bytes_recv - prev_data_recv
+
+            # Print the network statistics
+            print_data(upload_speed, download_speed, current_net_stats)
+            
+            # Update previous stats for the next calculation
+            prev_data_sent = current_net_stats.bytes_sent
+            prev_data_recv = current_net_stats.bytes_recv
+
+    except KeyboardInterrupt:
+        print("\nExiting Apurba Network Analyzer. Goodbye!")
+    except Exception as e:
+        print(f"\nAn error occurred: {e}")
+
+# Run the Apurba Network Analyzer
+if __name__ == "__main__":
+    apurba_network_analyzer()
 # Auto detect text files and perform LF normalization
 * text=auto
