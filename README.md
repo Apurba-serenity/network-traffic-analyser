@@ -37,7 +37,7 @@ python main.py
 Follow the on-screen instructions to start capturing and analyzing network traffic.
 
 ## Example Screenshots 📸
-_Add screenshots or diagrams to showcase your project’s functionality._
+![image](https://github.com/user-attachments/assets/dd7861a0-1882-4c5a-8127-5a9f12d96474)
 
 ## Contribution 🤝
 Contributions are welcome! Feel free to fork the repository, make changes, and submit a pull request.
